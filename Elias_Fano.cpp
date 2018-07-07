@@ -8,31 +8,29 @@ using namespace std;
 using namespace sdsl;
 
 #define INC 128
-#define sampling 3
+#define sampling 64
 
 
-int main (int argc, char** argv){
+int main (int argc, char** argv){// Recibe como argumento el largo del arreglo
+    int largo = 0;
+    double r = 0;
+    largo = atoi(argv[1]);
+    int X [largo]={};
+    int Y [largo]={};
+    int S [largo/sampling] = {};
 
-    double r;
-    int X [12]={0};
-    int Y [12]={0};
-    int S [12/sampling];
-
-
-    for(int i = 0; i< 12; i++){
+    for(int i = 1; i< largo; i++){//Genero el arreglo no decreciente
         r = rand()%INC;
         X[i]=X[i-1]+r;
-        cout<< r << " " << X[i] << endl;
-    }
-    for (int i=0; i<12; i++){
-        cout << X[i] << endl;
     }
     Y[0] = X[0];
-    for(int i=1;i<12;i++){
+    for(int i=1;i<largo;i++){//Genero el arreglo de gaps
         Y[i]=X[i]-X[i-1];
     }
-    for(int i = 0; i < 12/sampling;i++){
+    S[1]=Y[1];
+    for(int i = 1; i < round(largo/sampling);i++){//Genero el sampling
         S[i] = X[i*sampling];
-        cout << S[i] << endl;
     }
+
+    
 }
