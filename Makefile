@@ -8,6 +8,7 @@ all: build
 
 build:
 	$(CC) $(CFLAGS) $(INCLUDES) -o GC Gap_Coding.cpp $(LIB)
+	$(CC) $(CFLAGS) $(INCLUDES) -o PD PI_4_Delta.cpp $(LIB)
 
 clean:
 	/bin/rm -f *.o
