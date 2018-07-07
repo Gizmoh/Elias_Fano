@@ -7,7 +7,7 @@ LIB=$(SDSL_DIR)/lib/libsdsl.a $(SDSL_DIR)/lib/libdivsufsort.a $(SDSL_DIR)/lib/li
 all: build
 
 build:
-	$(CC) $(CFLAGS) $(INCLUDES) -o EF Elias_Fano.cpp $(LIB)
+	$(CC) $(CFLAGS) $(INCLUDES) -o GC Gap_Coding.cpp $(LIB)
 
 clean:
 	/bin/rm -f *.o
