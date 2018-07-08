@@ -35,9 +35,8 @@ int main (int argc, char** argv){// Recibe como argumento el largoARR del arregl
     int X [largoARR]={};
     int Y [largoARR]={};
     int S [largoARR/sampling] = {};
-    bit_vector_il<largoARR> Ex;
-    bit_vector_il<largoARR>::rank_1_type rankEx;
-    bit_vector_il<largoARR>::select_1_type selEx;
+    bit_vector Ex (largoARR,0);
+    rank_support_v<> rankEx (&Ex);
 
     for(int i = 1; i< largoARR; i++){//Genero el arreglo no decreciente
         r = rand()%INC;
@@ -76,10 +75,14 @@ int main (int argc, char** argv){// Recibe como argumento el largoARR del arregl
         }
         else{
             contadorO++;
+            Ex[i] = 1;
         }
     }
     porcentajeI = double(contadorI)/double(largoARR);
     porcentajeO = double(contadorO)/double(largoARR);
     cout << "porcentaje en el intervalo: " << porcentajeI << " " << contadorI;
     cout << " porcentaje fuera del intervalo: " << porcentajeO<< " " << contadorO << endl;
+
+    cout << Ex << endl;
+
 }
