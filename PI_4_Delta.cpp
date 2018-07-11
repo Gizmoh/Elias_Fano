@@ -3,9 +3,11 @@
 #include <sdsl/util.hpp>
 #include <math.h>
 #include <time.h>
+#include "include/BasicCDS.h"
 
 using namespace std;
 using namespace sdsl;
+using namespace cds;
 
 #define INC 128
 #define sampling 64
@@ -35,8 +37,11 @@ int main (int argc, char** argv){// Recibe como argumento el largoARR del arregl
     int X [largoARR]={};
     int Y [largoARR]={};
     int S [largoARR/sampling] = {};
+    ulong 
     bit_vector Ex (largoARR,0);
     rank_support_v<> rankEx (&Ex);
+    bit_vector::select_1_type Ex_Sel1(&Ex);
+    bit_vector::select_0_type Ex_Sel0(&Ex);
 
     for(int i = 1; i< largoARR; i++){//Genero el arreglo no decreciente
         r = rand()%INC;
@@ -84,5 +89,6 @@ int main (int argc, char** argv){// Recibe como argumento el largoARR del arregl
     cout << " porcentaje fuera del intervalo: " << porcentajeO<< " " << contadorO << endl;
 
     cout << Ex << endl;
+
 
 }
