@@ -37,7 +37,7 @@ int main (int argc, char** argv){// Recibe como argumento el largoARR del arregl
     int X [largoARR]={};
     int Y [largoARR]={};
     int S [largoARR/sampling] = {};
-    ulong 
+    ulong *Gaps, *Excep, *Samples;
     bit_vector Ex (largoARR,0);
     rank_support_v<> rankEx (&Ex);
     bit_vector::select_1_type Ex_Sel1(&Ex);
@@ -64,15 +64,18 @@ int main (int argc, char** argv){// Recibe como argumento el largoARR del arregl
         testing (Y,S,X);
     }*/
 
-    cout << "gap mayor: " << mayor << endl;
+    cout << "Gap mayor: " << mayor << endl;
+    cout << "Bits necesarios: " << (1+int(log2(mayor))) << endl;
+    cout << "Sampling mayor: " << (S[largoARR/sampling-1]) << endl;
     cout << "calculo de distribuciones:" << endl;
 
-    int top = trunc(mayor *0.875);
-    int bot = trunc(mayor *0.125);
+    int top = trunc(mayor *0.95);
+    int bot = trunc(mayor *0.05);
     int contadorI = 0; 
     int contadorO = 0;
     double porcentajeI = 0;
     double porcentajeO = 0;
+    double q;
     cout << bot << " " << top << endl;
     for(int i = 0; i < largoARR; i++){
         if(bot < Y[i] and top > Y[i]){
@@ -85,8 +88,8 @@ int main (int argc, char** argv){// Recibe como argumento el largoARR del arregl
     }
     porcentajeI = double(contadorI)/double(largoARR);
     porcentajeO = double(contadorO)/double(largoARR);
-    cout << "porcentaje en el intervalo: " << porcentajeI << " " << contadorI;
-    cout << " porcentaje fuera del intervalo: " << porcentajeO<< " " << contadorO << endl;
+    cout << "Porcentaje en el intervalo: " << porcentajeI << " " << contadorI;
+    cout << ", porcentaje fuera del intervalo: " << porcentajeO<< " " << contadorO << endl;
 
     cout << Ex << endl;
 
