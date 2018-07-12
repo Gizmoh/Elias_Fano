@@ -32,11 +32,16 @@ int genInterval(int X[], int mayor){ //Calculo el techo del intervalo de forma q
     return y;
 }
 
+void leerElemento(int pos, bit_vector ex,ulong *Samples, ulong *Gaps, ulong *Exceps){
+    int aux = pos/sampling;
+}
+
 void storeSamples(ulong *Samples, int X[],uint BitA){
     int i,j;
     for (i=j=0; i< round(largoARR/sampling); i++,j+=BitA){
-        setNum64(Samples,j,BitA,X[i]);
-        cout << "Numero real: " << X[i] << endl;
+        setNum64(Samples,j,BitA,X[i*sampling]);
+        cout <<"Posicion: " << i*sampling << endl;
+        cout << "Numero real: " << X[i*sampling] << endl;
         cout <<"Numero almacenado: " << getNum64(Samples,j, BitA) << endl;
     }
 }
@@ -76,6 +81,7 @@ void testing(int X[], int Y[], int Z[]){ //X arreglo de gaps; Y sampling, Z arre
     srand (time(NULL));
     testing  = rand()%largoARR;
     sampled = trunc(testing/sampling);
+    cout << sampled << endl;
     resultado = Y[sampled];
     //cout << Y[sampled] << " "<< testing << " " << sampled << " " << sampled*sampling << endl;
     for(int i = sampled*sampling;i < testing; i++){
@@ -90,9 +96,9 @@ int main (int argc, char** argv){// Recibe como argumento el largoARR del arregl
     int mayor = 0;
     int X [largoARR]={};
     int Y [largoARR]={};
+    double test = double(largoARR/sampling);
     int nCellsS = largoARR/sampling;
     int nCellG = largoARR - nCellsS;
-    cout << nCellsS << " " << nCellG << endl;
     int S [nCellsS] = {};
     ulong *Gaps, *Excep, *Samples;
     bit_vector Ex (largoARR,0);
@@ -167,8 +173,4 @@ int main (int argc, char** argv){// Recibe como argumento el largoARR del arregl
     porcentajeO = double(contadorO)/double(largoARR);
     cout << "Porcentaje en el intervalo: " << porcentajeI;
     cout << ", porcentaje fuera del intervalo: " << porcentajeO<< endl;
-
-    cout << Ex << endl;
-
-
 }
