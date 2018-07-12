@@ -32,17 +32,38 @@ int genInterval(int X[], int mayor){ //Calculo el techo del intervalo de forma q
     return y;
 }
 
-void leerElemento(int pos, bit_vector ex,ulong *Samples, ulong *Gaps, ulong *Exceps){
-    int aux = pos/sampling;
+void leerElemento(int pos, bit_vector Ex,ulong *Samples, ulong *Gaps, ulong *Excep,int  mayor,int  Smayor){
+    int SamplePos = pos/sampling;
+    int Start = (SamplePos*sampling);
+    int solucion = getNum64(Samples,(Smayor*(SamplePos)),Smayor);
+    rank_support_v<1> rankEx_1 (&Ex);
+    rank_support_v<0> rankEx_0 (&Ex);
+    bit_vector::select_1_type Ex_Sel1(&Ex);
+    bit_vector::select_0_type Ex_Sel0(&Ex);
+    for (int i = Start; i < pos; i++){
+        cout << i << " ";
+        if(Ex[i]==0){
+            cout <<" Select: "<<Ex_Sel0(i) << " Rank: ";
+            cout << rankEx_0(i) << " (0) corresponde a " << getNum64(Gaps,(mayor*(rankEx_0(i))),mayor) << endl;
+            cout << "Siguiente: " << getNum64(Gaps,(mayor*(rankEx_0(i+1))),mayor) << endl;
+            cout << "Anterior: " << getNum64(Gaps,(mayor*(rankEx_0(i-1))),mayor) << endl;
+            solucion += getNum64(Gaps,(mayor*(rankEx_0(i))),mayor);
+        }
+        else{
+            cout << rankEx_1(i)<< " (1) corresponde a " << getNum64(Excep,(mayor*(rankEx_1(i))),mayor) << endl;
+            solucion += getNum64(Excep,(mayor*(rankEx_1(i))),mayor);
+        }
+    }
+    cout << "Numero calculado: " << solucion;
 }
 
 void storeSamples(ulong *Samples, int X[],uint BitA){
     int i,j;
     for (i=j=0; i< round(largoARR/sampling); i++,j+=BitA){
-        setNum64(Samples,j,BitA,X[i*sampling]);
+        setNum64(Samples,j,BitA,X[i*sampling]);/*
         cout <<"Posicion: " << i*sampling << endl;
         cout << "Numero real: " << X[i*sampling] << endl;
-        cout <<"Numero almacenado: " << getNum64(Samples,j, BitA) << endl;
+        cout <<"Numero almacenado: " << getNum64(Samples,j, BitA) << endl;*/
     }
 }
 void Storage(int Y[],ulong *Gaps, ulong *Excep, bit_vector Ex,int Bits){
@@ -56,7 +77,7 @@ void Storage(int Y[],ulong *Gaps, ulong *Excep, bit_vector Ex,int Bits){
             Ex[i] = 0;
             continue;
         }
-        if(Ex[i]==0){//Si en el bit_vector el valor es 0, guarda el elemento correspondiente del arreglo X en el ulong de gaps, restandole A.
+        if(Ex[i]==0){//Si en el bit_vector el valor es 0, guarda el elemento correspondiente del arreglo X en el ulong de gaps.
             setNum64(Gaps,counterA,Bits,Y[i]);/*
             cout << "Dentro intervalo, Numero real: " << Y[i] << endl;
             cout <<"Numero almacenado: " << getNum64(Gaps,counterA, Bits) << endl;*/
@@ -102,9 +123,6 @@ int main (int argc, char** argv){// Recibe como argumento el largoARR del arregl
     int S [nCellsS] = {};
     ulong *Gaps, *Excep, *Samples;
     bit_vector Ex (largoARR,0);
-    rank_support_v<> rankEx (&Ex);
-    bit_vector::select_1_type Ex_Sel1(&Ex);
-    bit_vector::select_0_type Ex_Sel0(&Ex);
 
     for(int i = 0; i< largoARR; i++){//Genero el arreglo no decreciente
         r = rand()%INC;
@@ -173,4 +191,6 @@ int main (int argc, char** argv){// Recibe como argumento el largoARR del arregl
     porcentajeO = double(contadorO)/double(largoARR);
     cout << "Porcentaje en el intervalo: " << porcentajeI;
     cout << ", porcentaje fuera del intervalo: " << porcentajeO<< endl;
+    leerElemento(129,Ex,Samples,Gaps,Excep,BitMayor,BitSamplingMayor);
+    cout << " Numero pedido: " << X[129] << endl;
 }
