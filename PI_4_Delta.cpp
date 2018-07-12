@@ -12,7 +12,28 @@ using namespace cds;
 #define INC 128
 #define sampling 64
 #define largoARR 256
-typedef bit_vector::size_type size_type;
+#define TESTING 1000
+
+int genInterval(int X[], int mayor){ //Calculo el techo del intervalo de forma que 10% quede adentro
+    int contadorI;
+    int y = mayor;
+    double percent = 1;
+    while (percent >0.9){
+        y--;
+        contadorI = 0;
+        percent = 1;
+        for(int i = 0;i < largoARR; i++){
+            cout << X[i] << " " << y << endl;
+            if (X[i]<y){
+                contadorI++;
+            }
+        }
+        percent = double(contadorI)/double(largoARR);
+        cout<< y << endl;
+        cout<< "contador: "<< contadorI <<  " porcentaje :" << percent << endl;
+    }
+    return y;
+}
 
 void storeSamples(ulong *Samples, int X[],uint BitA){
     int i,j;
@@ -20,13 +41,8 @@ void storeSamples(ulong *Samples, int X[],uint BitA){
         setNum64(Samples,j,BitA,X[i]);
     }
 }
-void Storage(int X[],ulong *Gaps, ulong *Excep, bit_vector Ex,int Mayor,int A,int contadorI, int contadorO){
-    int i,j,k,BitsA,BitsB;
-    BitsA = (1+int(log2(Mayor))); //bitsA almacena los bits necesarios para almacenar el Gap mas grande.
-    BitsB = (1+int(log2(Mayor-A))); //bitsB almacena los bits necesarios para almacenar el Gap mas grande, menos A.
-
-    Gaps = new ulong[contadorI*BitsA];//mmmmmmmmmmmm
-    Excep = new ulong[contadorO*BitsB];//needs more cowbell
+void Storage(int Y[],ulong *Gaps, ulong *Excep, bit_vector Ex,int Mayor){
+    int i,j,k;
 
     for (i = 1,j,k=0;i < largoARR; i++){//Si el elemento es uno de los que se encuentran en el sampling, se cambia el numero en el bit_vector a 0 y se salta.
         if(i%(sampling+1)==0){
@@ -97,10 +113,6 @@ int main (int argc, char** argv){// Recibe como argumento el largoARR del arregl
         S[i] = X[i*sampling];
     }
 
-    /*for(int i=0; i < 25; i++){
-        testing (Y,S,X);
-    }*/
-
     uint BitMayor = (1+int(log2(mayor)));
     uint BitSamplingMayor = (1+int(log2(S[largoARR/sampling-1])));
 
@@ -112,16 +124,14 @@ int main (int argc, char** argv){// Recibe como argumento el largoARR del arregl
     cout << "Se necesitan " << (BitSamplingMayor * round(largoARR/sampling)) << " bits para almacenar el sampling" << endl;
 
 
-    int top = trunc(mayor *0.95);
-    int bot = trunc(mayor *0.05);
+    int top = 0;
     int contadorI = 0; 
     int contadorO = 0;
     double porcentajeI = 0;
     double porcentajeO = 0;
-    double q;
-    cout << bot << " " << top << endl;
+    top = genInterval(Y,mayor);
     for(int i = 0; i < largoARR; i++){
-        if(bot < Y[i] and top > Y[i]){
+        if(top > Y[i]){
             contadorI++;
         }
         else{
@@ -133,11 +143,16 @@ int main (int argc, char** argv){// Recibe como argumento el largoARR del arregl
     int aux = nCellsS*BitSamplingMayor/W64;
     if (nCellsS*BitSamplingMayor % W64)
         aux++;
-    cout << "sizeof Samples = " << aux*sizeof(ulong) << " bites" << endl;
+    int aux2 = nCellG*BitMayor/W64;
+    if (nCellG*BitMayor % W64)
+        aux2++;
+    cout << "sizeof Samples = " << aux*sizeof(ulong) << " bits" << endl;
+    cout << "sizeof Gaps = " << aux2*sizeof(ulong) << " bits" << endl;
     Samples = new ulong[aux];
+    Gaps = new ulong[aux2];
 
     storeSamples(Samples,X, BitSamplingMayor);
-    Storage(Y,Gaps,Excep,Ex,mayor,top,contadorI,contadorO);
+    Storage(Y,Gaps,Excep,Ex,mayor);
 
     porcentajeI = double(contadorI)/double(largoARR);
     porcentajeO = double(contadorO)/double(largoARR);
