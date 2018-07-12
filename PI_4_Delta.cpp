@@ -41,16 +41,18 @@ void leerElemento(int pos, bit_vector Ex,ulong *Samples, ulong *Gaps, ulong *Exc
     bit_vector::select_1_type Ex_Sel1(&Ex);
     bit_vector::select_0_type Ex_Sel0(&Ex);
     for (int i = Start; i < pos; i++){
-        cout << i << " ";
-        if(Ex[i]==0){
+        //cout<< "Valor de i: " << i << " ";
+        if(Ex[i]==0){/*
             cout <<" Select: "<<Ex_Sel0(i) << " Rank: ";
-            cout << rankEx_0(i) << " (0) corresponde a " << getNum64(Gaps,(mayor*(rankEx_0(i))),mayor) << endl;
-            cout << "Siguiente: " << getNum64(Gaps,(mayor*(rankEx_0(i+1))),mayor) << endl;
-            cout << "Anterior: " << getNum64(Gaps,(mayor*(rankEx_0(i-1))),mayor) << endl;
-            solucion += getNum64(Gaps,(mayor*(rankEx_0(i))),mayor);
+            cout << rankEx_0(i) << " (0) corresponde a " << getNum64(Gaps,(mayor*(rankEx_0(i-SamplePos+1))),mayor) << ", SamplePos: " << SamplePos << endl;
+            cout << "Siguiente: " << getNum64(Gaps,(mayor*(rankEx_0(i-SamplePos+1+1))),mayor) << endl;
+            cout << "Anterior: " << getNum64(Gaps,(mayor*(rankEx_0(i-SamplePos+1-1))),mayor) << endl;*/
+            solucion += getNum64(Gaps,(mayor*(rankEx_0(i-SamplePos+1))),mayor);
         }
-        else{
+        else{/*
             cout << rankEx_1(i)<< " (1) corresponde a " << getNum64(Excep,(mayor*(rankEx_1(i))),mayor) << endl;
+            cout << "Siguiente: " << getNum64(Excep,(mayor*(rankEx_1(i+1))),mayor) << endl;
+            cout << "Anterior: " << getNum64(Excep,(mayor*(rankEx_1(i-1))),mayor) << endl;*/
             solucion += getNum64(Excep,(mayor*(rankEx_1(i))),mayor);
         }
     }
@@ -75,6 +77,7 @@ void Storage(int Y[],ulong *Gaps, ulong *Excep, bit_vector Ex,int Bits){
     for (int i = 1;i < largoARR; i++){//Si el elemento es uno de los que se encuentran en el sampling, se cambia el numero en el bit_vector a 0 y se salta.
         if(i%(sampling+1)==0){
             Ex[i] = 0;
+            cout << "posicion: " << i << "numero: " << Y[i] << endl;
             continue;
         }
         if(Ex[i]==0){//Si en el bit_vector el valor es 0, guarda el elemento correspondiente del arreglo X en el ulong de gaps.
@@ -191,6 +194,10 @@ int main (int argc, char** argv){// Recibe como argumento el largoARR del arregl
     porcentajeO = double(contadorO)/double(largoARR);
     cout << "Porcentaje en el intervalo: " << porcentajeI;
     cout << ", porcentaje fuera del intervalo: " << porcentajeO<< endl;
-    leerElemento(129,Ex,Samples,Gaps,Excep,BitMayor,BitSamplingMayor);
-    cout << " Numero pedido: " << X[129] << endl;
+    for(int i = 115; i < 140; i++){
+        leerElemento(i,Ex,Samples,Gaps,Excep,BitMayor,BitSamplingMayor);
+        cout << " Numero pedido: " << X[i] << " Valor de i: "<< i << endl;
+    }
+    //leerElemento(130,Ex,Samples,Gaps,Excep,BitMayor,BitSamplingMayor);
+
 }
