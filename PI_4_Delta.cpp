@@ -28,22 +28,23 @@ void Storage(int X[],ulong *Gaps, ulong *Excep, bit_vector Ex,int Mayor,int A,in
     Gaps = new ulong[contadorI*BitsA];//mmmmmmmmmmmm
     Excep = new ulong[contadorO*BitsB];//needs more cowbell
 
-    for (i = 1,j,k=0;i < largoARR; i++){
+    for (i = 1,j,k=0;i < largoARR; i++){//Si el elemento es uno de los que se encuentran en el sampling, se cambia el numero en el bit_vector a 0 y se salta.
         if(i%(sampling+1)==0){
+            Ex[i] = 0;
             continue;
-        }
-        if(Ex[i]==0){
+        }/* Aqui tenemos un problema, el programa crashea
+        if(Ex[i]==0){//Si en el bit_vector el valor es 0, guarda el elemento correspondiente del arreglo X en el ulong de gaps, restandole A.
             setNum64(Gaps,j,BitsA,(X[i]-A));
             j+=BitsA;
             cout << "Numero real: " << X[i] << endl;
             cout <<"Numero almacenado: " << getNum64(Gaps,j, BitsA) << endl;
         }
-        if(Ex[i]==1){
-            setNum64(Excep,k,BitsB,(X[i]));
+        else{//Si en el bit_vector el valor es 1, guarda el elemento correspondiente del arreglo X en el ulong de excepciones.
+            setNum64(Excep,k,BitsB,X[i]);
             k+=BitsB;
             cout << "Numero real: " << X[i] << endl;
-            cout <<"Numero almacenado: " << getNum64(Excep,j, BitsB) << endl;
-        }
+            cout <<"Numero almacenado: " << getNum64(Excep,k, BitsB) << endl;
+        }*/
     }
 }
 
@@ -69,7 +70,10 @@ int main (int argc, char** argv){// Recibe como argumento el largoARR del arregl
     int mayor = 0;
     int X [largoARR]={};
     int Y [largoARR]={};
-    int S [largoARR/sampling] = {};
+    int nCellsS = largoARR/sampling;
+    int nCellG = largoARR - nCellsS;
+    cout << nCellsS << " " << nCellG << endl;
+    int S [nCellsS] = {};
     ulong *Gaps, *Excep, *Samples;
     bit_vector Ex (largoARR,0);
     rank_support_v<> rankEx (&Ex);
@@ -125,10 +129,15 @@ int main (int argc, char** argv){// Recibe como argumento el largoARR del arregl
             Ex[i] = 1;
         }
     }
-    Samples = new ulong[S[largoARR/sampling-1]];
-    storeSamples(Samples,X, BitSamplingMayor);
-    Storage(X,Gaps,Excep,Ex,mayor,top,contadorI,contadorO);
 
+    int aux = nCellsS*BitSamplingMayor/W64;
+    if (nCellsS*BitSamplingMayor % W64)
+        aux++;
+    cout << "sizeof Samples = " << aux*sizeof(ulong) << " bites" << endl;
+    Samples = new ulong[aux];
+
+    storeSamples(Samples,X, BitSamplingMayor);
+    Storage(Y,Gaps,Excep,Ex,mayor,top,contadorI,contadorO);
 
     porcentajeI = double(contadorI)/double(largoARR);
     porcentajeO = double(contadorO)/double(largoARR);
