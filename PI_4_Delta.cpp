@@ -23,14 +23,11 @@ int genInterval(int X[], int mayor){ //Calculo el techo del intervalo de forma q
         contadorI = 0;
         percent = 1;
         for(int i = 0;i < largoARR; i++){
-            cout << X[i] << " " << y << endl;
             if (X[i]<y){
                 contadorI++;
             }
         }
         percent = double(contadorI)/double(largoARR);
-        cout<< y << endl;
-        cout<< "contador: "<< contadorI <<  " porcentaje :" << percent << endl;
     }
     return y;
 }
@@ -39,29 +36,36 @@ void storeSamples(ulong *Samples, int X[],uint BitA){
     int i,j;
     for (i=j=0; i< round(largoARR/sampling); i++,j+=BitA){
         setNum64(Samples,j,BitA,X[i]);
+        cout << "Numero real: " << X[i] << endl;
+        cout <<"Numero almacenado: " << getNum64(Samples,j, BitA) << endl;
     }
 }
-void Storage(int Y[],ulong *Gaps, ulong *Excep, bit_vector Ex,int Mayor){
-    int i,j,k;
+void Storage(int Y[],ulong *Gaps, ulong *Excep, bit_vector Ex,int Bits){
+    int counterA = 0;
+    int counterB = 0;
+    double t = 0.0;
 
-    for (i = 1,j,k=0;i < largoARR; i++){//Si el elemento es uno de los que se encuentran en el sampling, se cambia el numero en el bit_vector a 0 y se salta.
+    t = getTime_ms();
+    for (int i = 1;i < largoARR; i++){//Si el elemento es uno de los que se encuentran en el sampling, se cambia el numero en el bit_vector a 0 y se salta.
         if(i%(sampling+1)==0){
             Ex[i] = 0;
             continue;
-        }/* Aqui tenemos un problema, el programa crashea
+        }
         if(Ex[i]==0){//Si en el bit_vector el valor es 0, guarda el elemento correspondiente del arreglo X en el ulong de gaps, restandole A.
-            setNum64(Gaps,j,BitsA,(X[i]-A));
-            j+=BitsA;
-            cout << "Numero real: " << X[i] << endl;
-            cout <<"Numero almacenado: " << getNum64(Gaps,j, BitsA) << endl;
+            setNum64(Gaps,counterA,Bits,Y[i]);/*
+            cout << "Dentro intervalo, Numero real: " << Y[i] << endl;
+            cout <<"Numero almacenado: " << getNum64(Gaps,counterA, Bits) << endl;*/
+            counterA +=Bits;
         }
         else{//Si en el bit_vector el valor es 1, guarda el elemento correspondiente del arreglo X en el ulong de excepciones.
-            setNum64(Excep,k,BitsB,X[i]);
-            k+=BitsB;
-            cout << "Numero real: " << X[i] << endl;
-            cout <<"Numero almacenado: " << getNum64(Excep,k, BitsB) << endl;
-        }*/
+            setNum64(Excep,counterB,Bits,Y[i]);/*
+            cout << "Fuera intervalo, Numero real: " << Y[i] << endl;
+            cout <<"Numero almacenado: " << getNum64(Excep,counterB, Bits) << endl;*/
+            counterB +=Bits;
+        }
     }
+    t = getTime_ms() - t;
+    cout << "Tiempo de compresion: " << t << endl;
 }
 
 void testing(int X[], int Y[], int Z[]){ //X arreglo de gaps; Y sampling, Z arreglo original
@@ -146,18 +150,23 @@ int main (int argc, char** argv){// Recibe como argumento el largoARR del arregl
     int aux2 = nCellG*BitMayor/W64;
     if (nCellG*BitMayor % W64)
         aux2++;
+    int aux3 = contadorO*BitMayor/W64;
+    if(contadorO*BitMayor % W64){
+        aux3++;
+    }
     cout << "sizeof Samples = " << aux*sizeof(ulong) << " bits" << endl;
     cout << "sizeof Gaps = " << aux2*sizeof(ulong) << " bits" << endl;
     Samples = new ulong[aux];
     Gaps = new ulong[aux2];
+    Excep = new ulong[aux3];
 
     storeSamples(Samples,X, BitSamplingMayor);
-    Storage(Y,Gaps,Excep,Ex,mayor);
+    Storage(Y,Gaps,Excep,Ex,BitMayor);
 
     porcentajeI = double(contadorI)/double(largoARR);
     porcentajeO = double(contadorO)/double(largoARR);
-    cout << "Porcentaje en el intervalo: " << porcentajeI << " " << contadorI;
-    cout << ", porcentaje fuera del intervalo: " << porcentajeO<< " " << contadorO << endl;
+    cout << "Porcentaje en el intervalo: " << porcentajeI;
+    cout << ", porcentaje fuera del intervalo: " << porcentajeO<< endl;
 
     cout << Ex << endl;
 
