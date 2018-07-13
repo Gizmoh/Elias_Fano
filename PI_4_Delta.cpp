@@ -32,10 +32,11 @@ int genInterval(int X[], int mayor){ //Calculo el techo del intervalo de forma q
     return y;
 }
 
-void leerElemento(int pos, bit_vector Ex,ulong *Samples, ulong *Gaps, ulong *Excep,int  mayor,int  Smayor){
+void leerElemento(int pos, bit_vector Ex,ulong *Samples, ulong *Gaps, ulong *Excep,int  mayor,int  Smayor, int BitGapMayor){
     int SamplePos = pos/sampling;
     int Start = (SamplePos*sampling);
     int solucion = getNum64(Samples,(Smayor*(SamplePos)),Smayor);
+    int r;
     rank_support_v<1> rankEx_1 (&Ex);
     rank_support_v<0> rankEx_0 (&Ex);
     bit_vector::select_1_type Ex_Sel1(&Ex);
@@ -47,7 +48,8 @@ void leerElemento(int pos, bit_vector Ex,ulong *Samples, ulong *Gaps, ulong *Exc
             cout << rankEx_0(i) << " (0) corresponde a " << getNum64(Gaps,(mayor*(rankEx_0(i-SamplePos+1))),mayor) << ", SamplePos: " << SamplePos << endl;
             cout << "Siguiente: " << getNum64(Gaps,(mayor*(rankEx_0(i-SamplePos+1+1))),mayor) << endl;
             cout << "Anterior: " << getNum64(Gaps,(mayor*(rankEx_0(i-SamplePos+1-1))),mayor) << endl;*/
-            solucion += getNum64(Gaps,(mayor*(rankEx_0(i-SamplePos+1))),mayor);
+            r = (rankEx_0(i)-SamplePos);
+            solucion += getNum64(Gaps,(BitGapMayor*r),BitGapMayor);
         }
         else{/*
             cout << rankEx_1(i)<< " (1) corresponde a " << getNum64(Excep,(mayor*(rankEx_1(i))),mayor) << endl;
@@ -59,9 +61,9 @@ void leerElemento(int pos, bit_vector Ex,ulong *Samples, ulong *Gaps, ulong *Exc
     cout << "Numero calculado: " << solucion;
 }
 
-void storeSamples(ulong *Samples, int X[],uint BitA){
+void storeSamples(ulong *Samples, int X[],uint BitA, int nCellsS){
     int i,j;
-    for (i=j=0; i< round(largoARR/sampling); i++,j+=BitA){
+    for (i=j=0; i<nCellsS; i++,j+=BitA){
         setNum64(Samples,j,BitA,X[i*sampling]);/*
         cout <<"Posicion: " << i*sampling << endl;
         cout << "Numero real: " << X[i*sampling] << endl;
@@ -75,7 +77,7 @@ void Storage(int Y[],ulong *Gaps, ulong *Excep, bit_vector Ex,int Bits){
 
     t = getTime_ms();
     for (int i = 1;i < largoARR; i++){//Si el elemento es uno de los que se encuentran en el sampling, se cambia el numero en el bit_vector a 0 y se salta.
-        if(i%(sampling+1)==0){
+        if(i%(sampling)==0){
             Ex[i] = 0;
             cout << "posicion: " << i << "numero: " << Y[i] << endl;
             continue;
@@ -122,6 +124,8 @@ int main (int argc, char** argv){// Recibe como argumento el largoARR del arregl
     int Y [largoARR]={};
     double test = double(largoARR/sampling);
     int nCellsS = largoARR/sampling;
+    if (largoARR%sampling)
+        nCellsS++;
     int nCellG = largoARR - nCellsS;
     int S [nCellsS] = {};
     ulong *Gaps, *Excep, *Samples;
@@ -146,6 +150,7 @@ int main (int argc, char** argv){// Recibe como argumento el largoARR del arregl
 
     uint BitMayor = (1+int(log2(mayor)));
     uint BitSamplingMayor = (1+int(log2(S[largoARR/sampling-1])));
+    uint GapMayor = 0;
 
     cout << "Gap mayor: " << mayor << endl;
     cout << "Bits necesarios: " << BitMayor << endl;
@@ -163,6 +168,8 @@ int main (int argc, char** argv){// Recibe como argumento el largoARR del arregl
     top = genInterval(Y,mayor);
     for(int i = 0; i < largoARR; i++){
         if(top > Y[i]){
+            if(GapMayor < Y[i])
+                GapMayor = Y[i];
             contadorI++;
         }
         else{
@@ -171,14 +178,17 @@ int main (int argc, char** argv){// Recibe como argumento el largoARR del arregl
         }
     }
 
+    uint BitGapMayor = (1 + log2(GapMayor));
+
+
     int aux = nCellsS*BitSamplingMayor/W64;
-    if (nCellsS*BitSamplingMayor % W64)
+    if ((nCellsS*BitSamplingMayor) % W64)
         aux++;
-    int aux2 = nCellG*BitMayor/W64;
-    if (nCellG*BitMayor % W64)
+    int aux2 = nCellG*BitGapMayor/W64;
+    if ((nCellG*BitGapMayor) % W64)
         aux2++;
     int aux3 = contadorO*BitMayor/W64;
-    if(contadorO*BitMayor % W64){
+    if((contadorO*BitMayor) % W64){
         aux3++;
     }
     cout << "sizeof Samples = " << aux*sizeof(ulong) << " bits" << endl;
@@ -187,17 +197,16 @@ int main (int argc, char** argv){// Recibe como argumento el largoARR del arregl
     Gaps = new ulong[aux2];
     Excep = new ulong[aux3];
 
-    storeSamples(Samples,X, BitSamplingMayor);
+    storeSamples(Samples,X, BitSamplingMayor, nCellsS);
     Storage(Y,Gaps,Excep,Ex,BitMayor);
 
     porcentajeI = double(contadorI)/double(largoARR);
     porcentajeO = double(contadorO)/double(largoARR);
     cout << "Porcentaje en el intervalo: " << porcentajeI;
     cout << ", porcentaje fuera del intervalo: " << porcentajeO<< endl;
-    for(int i = 115; i < 140; i++){
-        leerElemento(i,Ex,Samples,Gaps,Excep,BitMayor,BitSamplingMayor);
+    for(int i = 60; i < 210; i++){
+        leerElemento(i,Ex,Samples,Gaps,Excep,BitMayor,BitSamplingMayor,BitGapMayor);
         cout << " Numero pedido: " << X[i] << " Valor de i: "<< i << endl;
     }
-    //leerElemento(130,Ex,Samples,Gaps,Excep,BitMayor,BitSamplingMayor);
 
 }
