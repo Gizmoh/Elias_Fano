@@ -1,6 +1,7 @@
 #include <sdsl/suffix_arrays.hpp>
 #include <sdsl/int_vector.hpp>
 #include <sdsl/util.hpp>
+#include <stdlib.h>
 #include <math.h>
 #include <time.h>
 #include "include/BasicCDS.h"
@@ -11,7 +12,7 @@ using namespace cds;
 
 #define INC 32
 #define sampling 256
-#define largoARR 2048
+#define largoARR 262144
 #define TESTING 1000
 
 /*========================================================================================================*/
@@ -99,7 +100,7 @@ void Storage(int Y[], ulong *Gaps, ulong *Excep, bit_vector Ex, int Bits, int Bi
         if (i % (sampling) == 0)
         {
             Ex[i] = 0;
-            cout << "posicion: " << i << "numero: " << Y[i] << endl;
+            //cout << "posicion: " << i << " numero: " << Y[i] << endl;
             continue;
         }
         if (Ex[i] == 0)
@@ -217,7 +218,7 @@ int main(int argc, char **argv)
 
     porcentajeI = double(contadorI) / double(largoARR);
     porcentajeO = double(contadorO) / double(largoARR);
-    cout << "Porcentaje en el intervalo: " << porcentajeI;
+    cout << " Porcentaje en el intervalo: " << porcentajeI;
     cout << ", porcentaje fuera del intervalo: " << porcentajeO << endl;
     double T_ejec = 0.0;
     int rand_X = 0;
