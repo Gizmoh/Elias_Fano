@@ -248,7 +248,5 @@ int main(int argc, char **argv)
     cout << "Tiempo de ejecucion: " << T_Total << endl;
     ulong *Test;
     setNum64(Test, 0, 5, 5);
-
-    cout << *Test << " " << getNum64(Test, 0, 5) << " " << Ex << " " << Samples << endl;
     exit;
 }
