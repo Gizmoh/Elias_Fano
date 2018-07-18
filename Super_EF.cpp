@@ -17,10 +17,18 @@ using namespace cds;
 
 
 #define INCRE 16
-#define SAMPLEO 32
-#define LARGO 128
+#define SAMPLEO 128
+#define LARGO 1024
 #define const 
-void buscar (int busca, int gc[] , int s[]){}
+void buscar (int busca, bit_vector H , bit_vector R){
+    int aux = 0;
+    int auxB = 0;
+    rank_support_v<0> rankH_0(&H);
+    bit_vector::select_1_type H_Sel1(&H);
+    aux  = H_Sel1(busca);
+    auxB = rankH_0(aux);
+    
+}
 
 /*=====================================================================================*/
 
@@ -52,35 +60,35 @@ int main(int argc, char** argv){
     string TlargoH, temp,tempA = "";
 
     
-    cout << "Iniciando Gaps" << endl;
+    //cout << "Iniciando Gaps" << endl;
     /*   GENERO ARREGLO NO DECRECIENTE  */
   
-    cout << "Arreglo "<<endl;
-    cout << x[0] ;
+    //cout << "Arreglo "<<endl;
+    //cout << x[0] ;
     for( int i = 1; i < LARGO; i++ ) {
         x[i] = x[i-1] + rand()%INCRE;
-        cout << " , " <<x[i];
+        //cout << " , " <<x[i];
     }
-    cout << endl;
+    //cout << endl;
   
     /*  GC  */
     Gc[0] = x[0];
-    cout << "Gaps"<< endl;
-    cout << Gc[0];
+    //cout << "Gaps"<< endl;
+    //cout << Gc[0];
     for(int i = 1; i<LARGO; i++){
         Gc[i] = (x[i]-x[i-1]);
-        cout << " , "<< Gc[i] ;
+        //cout << " , "<< Gc[i] ;
         if (mayor < Gc[i])  mayor = Gc[i];
     }
-    cout << endl;
+    //cout << endl;
     
     /*  Calcular el sampling  */
-    cout << "Sampling"<< endl;
+    //cout << "Sampling"<< endl;
         S[0] = x[0];
-        cout << S[0];
+        //cout << S[0];
     for(int i =SAMPLEO; i < LARGO; i = i + SAMPLEO ){
          S[i] = x[i];
-         cout << " , " <<S[i];
+         //cout << " , " <<S[i];
     }
     cout << endl;
 
@@ -98,7 +106,7 @@ int main(int argc, char** argv){
     buscar(busqueda,Gc,S);*/
 
 /*=====================================================================================*/
-    //Armo el arreglo H, partiendo por convertir numeros a binario.
+    //Genero los 2 bit vectors.
     string tempH[LARGO] = {""};
     int counter = 0;
     int X = 0;
@@ -109,6 +117,9 @@ int main(int argc, char** argv){
         tempA = temp.substr(0,11);
         tempH[i] = tempA;
         temp.erase(0,11);
+        for(int t = 0; t<2; t++){
+            if(temp[t]=='1') R[(2*i)+t] = 1;
+        }
         X = convertBinaryToDecimal(stoll(tempA));
     }
     for (int i = 0; i < LARGO; i++){
@@ -124,8 +135,10 @@ int main(int argc, char** argv){
         counter += (X+1);
         H[counter] = 1;
     }
-    cout << H << " Bits H" << endl;
-    cout << R << " Bits R" << endl;
+    /*
+    cout << endl;
+    cout <<"Bits H "<< H << endl;
+    cout <<"Bits R " << R <<  endl;*/
 
     if (Gc) delete [] Gc;
     if (x) delete [] x;
