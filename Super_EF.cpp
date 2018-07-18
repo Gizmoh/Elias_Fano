@@ -17,18 +17,9 @@ using namespace cds;
 
 
 #define INCRE 16
-#define SAMPLEO 128
-#define LARGO 1024
+#define SAMPLEO 16
+#define LARGO 2048
 #define const 
-void buscar (int busca, bit_vector H , bit_vector R){
-    int aux = 0;
-    int auxB = 0;
-    rank_support_v<0> rankH_0(&H);
-    bit_vector::select_1_type H_Sel1(&H);
-    aux  = H_Sel1(busca);
-    auxB = rankH_0(aux);
-    
-}
 
 /*=====================================================================================*/
 
@@ -47,12 +38,34 @@ int convertBinaryToDecimal(long long n) //Esta funcion convierte de binario a nu
 
 /*=====================================================================================*/
 
+void buscar (int busca, bit_vector H , bit_vector R){
+    int aux = 0;
+    int auxB = 0;
+    string tempX = "";
+    rank_support_v<0> rankH_0(&H);
+    bit_vector::select_1_type H_Sel1(&H);
+    aux  = H_Sel1(busca+1);
+    cout << "Select 1: " << aux << endl;
+    auxB = rankH_0(aux);
+    cout << "Rank 0: " << auxB << endl;
+    tempX = bitset<11>(auxB).to_string();
+    aux = R[(2*busca)];
+    auxB= R[(2*busca)+1];
+    tempX += to_string(aux);
+    tempX += to_string(auxB);
+    cout << "Resultado: " << convertBinaryToDecimal(stoll(tempX))<< " " << tempX << endl;
+}
+
+/*=====================================================================================*/
+
 int main(int argc, char** argv){
     
     int* x; 
+    int* xPrima;
     int* Gc;
     int* S;
     x = new int [LARGO];
+    xPrima = new int [LARGO];
     Gc = new int [LARGO];
     S = new int [LARGO/SAMPLEO];
     int logN,logM,largoH,largoR = 0;
@@ -60,26 +73,26 @@ int main(int argc, char** argv){
     string TlargoH, temp,tempA = "";
 
     
-    //cout << "Iniciando Gaps" << endl;
-    /*   GENERO ARREGLO NO DECRECIENTE  */
+    cout << "Iniciando Gaps" << endl;
+       //GENERO ARREGLO NO DECRECIENTE
   
-    //cout << "Arreglo "<<endl;
-    //cout << x[0] ;
+    cout << "Arreglo "<<endl;
+    cout << x[0] ;
     for( int i = 1; i < LARGO; i++ ) {
         x[i] = x[i-1] + rand()%INCRE;
-        //cout << " , " <<x[i];
+        cout << " , " <<x[i];
     }
-    //cout << endl;
+    cout << endl;
   
-    /*  GC  */
+    /*  GC  
     Gc[0] = x[0];
-    //cout << "Gaps"<< endl;
-    //cout << Gc[0];
+    cout << "Gaps"<< endl;
+    cout << Gc[0];
     for(int i = 1; i<LARGO; i++){
         Gc[i] = (x[i]-x[i-1]);
-        //cout << " , "<< Gc[i] ;
+        cout << " , "<< Gc[i] ;
         if (mayor < Gc[i])  mayor = Gc[i];
-    }
+    }*/
     //cout << endl;
     
     /*  Calcular el sampling  */
@@ -110,10 +123,11 @@ int main(int argc, char** argv){
     string tempH[LARGO] = {""};
     int counter = 0;
     int X = 0;
+    int aux = 0;
     bit_vector R (largoR,0);
 
     for(int i=0; i < LARGO;i++){
-        temp = bitset<13>(Gc[i]).to_string();
+        temp = bitset<13>(x[i]).to_string();
         tempA = temp.substr(0,11);
         tempH[i] = tempA;
         temp.erase(0,11);
@@ -121,24 +135,30 @@ int main(int argc, char** argv){
             if(temp[t]=='1') R[(2*i)+t] = 1;
         }
         X = convertBinaryToDecimal(stoll(tempA));
+        xPrima[i] = X;
     }
-    for (int i = 0; i < LARGO; i++){
-        X = convertBinaryToDecimal(stoll(tempH[i]));
-        counter += (X+1);
+    Gc[0] = xPrima[0];
+    for(int i = 1;i < LARGO; i++){
+        Gc[i]= (xPrima[i]-xPrima[i-1]);
+    }
+    
+
+    for (int i = 0; i < LARGO; i++){//Calculo cuantos bits necesito para los unarios.
+        counter += (Gc[i]+1);
         //cout << tempH[i] << " " << X << " " << endl;
     }
-    bit_vector H ((counter),0);
+    bit_vector H (counter,0);
     counter = 0;
     H[0] = 1;
     for (int i = 1; i < LARGO; i++){
-        X = convertBinaryToDecimal(stoll(tempH[i]));
-        counter += (X+1);
+        counter += (Gc[i]+1);
         H[counter] = 1;
     }
-    /*
+    
     cout << endl;
     cout <<"Bits H "<< H << endl;
-    cout <<"Bits R " << R <<  endl;*/
+    cout <<"Bits R " << R <<  endl;
+    buscar(6,H,R);
 
     if (Gc) delete [] Gc;
     if (x) delete [] x;
