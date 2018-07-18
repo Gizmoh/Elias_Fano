@@ -18,19 +18,38 @@ using namespace cds;
 
 #define INCRE 16
 #define SAMPLEO 32
-#define LARGO 64
+#define LARGO 128
 #define const 
 void buscar (int busca, int gc[] , int s[]){}
 
 /*=====================================================================================*/
 
+int convertBinaryToDecimal(long long n) //Esta funcion convierte de binario a numero descaradamente.
+{
+    int decimalNumber = 0, i = 0, remainder;
+    while (n!=0)
+    {
+        remainder = n%10;
+        n /= 10;
+        decimalNumber += remainder*pow(2,i);
+        ++i;
+    }
+    return decimalNumber;
+}
+
+/*=====================================================================================*/
+
 int main(int argc, char** argv){
     
-    int x[LARGO] = {0}; 
-    int Gc[LARGO] = {0};
-    int S[LARGO/SAMPLEO] = {0};
+    int* x; 
+    int* Gc;
+    int* S;
+    x = new int [LARGO];
+    Gc = new int [LARGO];
+    S = new int [LARGO/SAMPLEO];
     int logN,logM,largoH,largoR = 0;
     int mayor = 0;
+    string TlargoH, temp,tempA = "";
 
     
     cout << "Iniciando Gaps" << endl;
@@ -49,7 +68,7 @@ int main(int argc, char** argv){
     cout << "Gaps"<< endl;
     cout << Gc[0];
     for(int i = 1; i<LARGO; i++){
-        Gc[i] = x[i]-x[i-1];
+        Gc[i] = (x[i]-x[i-1]);
         cout << " , "<< Gc[i] ;
         if (mayor < Gc[i])  mayor = Gc[i];
     }
@@ -68,9 +87,9 @@ int main(int argc, char** argv){
     logN = (1 + int(log2(LARGO)));
     logM = (1 + int(log2(x[LARGO-1])));
     cout << "Bits significativos: " << logN << " Bits por celda: " << logM << endl;
-    largoH = logN*LARGO;
+    /*largoH = logN*LARGO; No puede calcularse a priori */
     largoR = (logM-logN)*LARGO;
-    cout "Largo arreglos: " << largoH << " " << largoR << endl;
+    cout<< "Largo arreglos: " << largoH << " " << largoR << endl;
 
 
 
@@ -79,5 +98,38 @@ int main(int argc, char** argv){
     buscar(busqueda,Gc,S);*/
 
 /*=====================================================================================*/
+    //Armo el arreglo H, partiendo por convertir numeros a binario.
+    string tempH[LARGO] = {""};
+    int counter = 0;
+    int X = 0;
+    bit_vector R (largoR,0);
+
+    for(int i=0; i < LARGO;i++){
+        temp = bitset<13>(Gc[i]).to_string();
+        tempA = temp.substr(0,11);
+        tempH[i] = tempA;
+        temp.erase(0,11);
+        X = convertBinaryToDecimal(stoll(tempA));
+    }
+    for (int i = 0; i < LARGO; i++){
+        X = convertBinaryToDecimal(stoll(tempH[i]));
+        counter += (X+1);
+        //cout << tempH[i] << " " << X << " " << endl;
+    }
+    bit_vector H ((counter),0);
+    counter = 0;
+    H[0] = 1;
+    for (int i = 1; i < LARGO; i++){
+        X = convertBinaryToDecimal(stoll(tempH[i]));
+        counter += (X+1);
+        H[counter] = 1;
+    }
+    cout << H << " Bits H" << endl;
+    cout << R << " Bits R" << endl;
+
+    if (Gc) delete [] Gc;
+    if (x) delete [] x;
+    if (S) delete [] S;
+
 //Elias-Fano
 }
