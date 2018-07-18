@@ -11,8 +11,8 @@ using namespace sdsl;
 using namespace cds;
 
 #define INC 32
-#define sampling 256
-#define largoARR 262144
+#define sampling 8192
+#define largoARR 65536
 #define TESTING 1000
 
 /*========================================================================================================*/
@@ -205,6 +205,7 @@ int main(int argc, char **argv)
     cout << "Bits necesarios: " << BitSamplingMayor << endl;
     cout << "Calculo de distribuciones:" << endl;
     cout << "Se necesitan " << (BitSamplingMayor * round(largoARR / sampling)) << " bits para almacenar el sampling" << endl;
+    cout << "Bits arreglo original: " << largoARR*sizeof(int) << endl;
 
     cout << "sizeof Samples = " << aux * sizeof(ulong) << " bits" << endl;
     cout << "sizeof Gaps = " << aux3 * sizeof(ulong) << " bits" << endl;

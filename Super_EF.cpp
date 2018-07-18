@@ -16,8 +16,9 @@ using namespace cds;
 
 
 
-#define INCRE 64
-#define LARGO 131072
+#define INCRE 32
+#define LARGO 65536
+#define TESTING 1000
 
 /*=====================================================================================*/
 
@@ -43,15 +44,15 @@ void buscar (int busca, bit_vector H , bit_vector R){
     rank_support_v<0> rankH_0(&H);
     bit_vector::select_1_type H_Sel1(&H);
     aux  = H_Sel1(busca+1);
-    cout << "Select 1: " << aux << endl;
+    //cout << "Select 1: " << aux << endl;
     auxB = rankH_0(aux);
-    cout << "Rank 0: " << auxB << endl;
-    tempX = bitset<14>(auxB).to_string();
+    //cout << "Rank 0: " << auxB << endl;
+    tempX = bitset<30>(auxB).to_string();
     aux = R[(2*busca)];
     auxB= R[(2*busca)+1];
     tempX += to_string(aux);
     tempX += to_string(auxB);
-    cout << "Resultado: " << convertBinaryToDecimal(stoll(tempX))<< " " << tempX << endl;
+    //cout << "Resultado: " << convertBinaryToDecimal(stoll(tempX))<< " " << tempX << endl;
 }
 
 /*=====================================================================================*/
@@ -61,6 +62,7 @@ int main(int argc, char** argv){
     int* x; 
     int* xPrima;
     int* Gc;
+    int diff = 0;
     x = new int [LARGO];
     xPrima = new int [LARGO];
     Gc = new int [LARGO];
@@ -76,7 +78,7 @@ int main(int argc, char** argv){
     cout << x[0] ;
     for( int i = 1; i < LARGO; i++ ) {
         x[i] = x[i-1] + rand()%INCRE;
-        cout << " , " <<x[i];
+        //cout << " , " <<x[i];
     }
     cout << endl;
 
@@ -84,7 +86,8 @@ int main(int argc, char** argv){
     logM = (1 + int(log2(x[LARGO-1])));
     /*largoH = logN*LARGO; No puede calcularse a priori */
     largoR = (logM-logN)*LARGO;
-    cout << "diff de bits: " << (logM-logN) << endl;
+    diff = logM-logN;
+    cout<<"bits M: " << logM << " bitsN: "<< logN << " diff de bits: " << diff << endl;
 
 
 
@@ -101,11 +104,11 @@ int main(int argc, char** argv){
     bit_vector R (largoR,0);
 
     for(int i=0; i < LARGO;i++){
-        temp = bitset<18>(x[i]).to_string();
-        tempA = temp.substr(0,14);
+        temp = bitset<30>(x[i]).to_string();
+        tempA = temp.substr(0,logN);
         tempH[i] = tempA;
-        temp.erase(0,14);
-        for(int t = 0; t<4; t++){
+        temp.erase(0,logN);
+        for(int t = 0; t<diff; t++){
             if(temp[t]=='1') R[(2*i)+t] = 1;
         }
         X = convertBinaryToDecimal(stoll(tempA));
@@ -132,9 +135,14 @@ int main(int argc, char** argv){
     }
     
     cout << endl;
+    uint auxi = 0;
     //cout <<"Bits H "<< H << endl;
     //cout <<"Bits R " << R <<  endl;
-    buscar(3,H,R);
+    for(int i=0; i< TESTING; i++){
+        auxi = rand()%LARGO;
+        //cout << auxi << endl;
+        buscar(auxi,H,R);
+    }
 
     if (Gc) delete [] Gc;
     if (x) delete [] x;
