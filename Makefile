@@ -9,7 +9,8 @@ all: build
 build:
 	$(CC) $(CFLAGS) $(INCLUDES) -o GC Gap_Coding.cpp $(LIB) -pg
 	$(CC) $(CFLAGS) $(INCLUDES) -o PD PI_4_Delta.cpp $(LIB) -pg
-	$(CC) $(CFLAGS) $(INCLUDES) -o EF Elias-Fano.cpp $(LIB)	-pg
+	$(CC) $(CFLAGS) $(INCLUDES) -o EF Elias-Fano.cpp $(LIB) -pg
+	$(CC) $(CFLAGS) $(INCLUDES) -o SEF Super_EF.cpp $(LIB) -pg
 
 clean:
 	/bin/rm -f *.o

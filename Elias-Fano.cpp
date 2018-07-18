@@ -3,14 +3,11 @@
 #include <stdlib.h>
 #include <ctime>
 #include <math.h> 
+#include <sdsl/bit_vectors.hpp>
 #include <iostream>
 #include <bitset>
-#include "include/BasicCDS.h"
-
 using namespace std;
 using namespace sdsl;
-using namespace cds;
-
 
 
 #define INCRE 64

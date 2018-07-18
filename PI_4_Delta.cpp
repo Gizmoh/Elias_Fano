@@ -246,5 +246,9 @@ int main(int argc, char **argv)
     }
     double T_Total = T_ejec / double(TESTING);
     cout << "Tiempo de ejecucion: " << T_Total << endl;
-    return NULL;
+    ulong *Test;
+    setNum64(Test, 0, 5, 5);
+
+    cout << *Test << " " << getNum64(Test, 0, 5) << " " << Ex << " " << Samples << endl;
+    exit;
 }
