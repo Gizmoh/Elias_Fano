@@ -10,8 +10,8 @@ using namespace sdsl;
 using namespace cds;
 
 #define INC 32
-#define sampling 128
-#define largoARR 1024
+#define sampling 256
+#define largoARR 2048
 #define TESTING 1000
 
 /*========================================================================================================*/
@@ -120,26 +120,9 @@ void Storage(int Y[], ulong *Gaps, ulong *Excep, bit_vector Ex, int Bits, int Bi
     t = getTime_ms() - t;
     cout << "Tiempo de compresion: " << t << endl;
 }
+
 /*========================================================================================================*/
-void testing(int X[], int Y[], int Z[])
-{ //X arreglo de gaps; Y sampling, Z arreglo original
-    int testing = 0;
-    int resultado = 0;
-    int sampled = 0;
-    int size = 0;
-    srand(time(NULL));
-    testing = rand() % largoARR;
-    sampled = trunc(testing / sampling);
-    cout << sampled << endl;
-    resultado = Y[sampled];
-    //cout << Y[sampled] << " "<< testing << " " << sampled << " " << sampled*sampling << endl;
-    for (int i = sampled * sampling; i < testing; i++)
-    {
-        resultado = resultado + X[i + 1];
-    }
-    cout << testing << " " << resultado << " " << Z[testing] << endl;
-}
-/*========================================================================================================*/
+
 int main(int argc, char **argv)
 { // Recibe como argumento el largoARR del arreglo
     double r = 0;
