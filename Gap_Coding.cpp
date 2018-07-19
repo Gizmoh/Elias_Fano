@@ -9,8 +9,8 @@ using namespace std;
 using namespace sdsl;
 using namespace cds;
 
-#define INC 32
-#define sampling 256
+#define INC 16
+#define sampling 8192
 #define LARGO 65536
 #define TESTING 1000
 
@@ -65,16 +65,17 @@ int main (int argc, char** argv){// Recibe como argumento el LARGO del arreglo
         setNum64(Gap,j,BitMayor,Y[i]);
     }
     double t = 0.0;
+    double Ttotal = 0.0;
     for(int i=0; i < TESTING; i++){
         t = getTime_ms();
         testing (Gap,S,X, BitMayor);
-        t += getTime_ms()-t;
+        Ttotal += (getTime_ms()-t);
     }
-    t = (t / TESTING);
+    Ttotal = (Ttotal / TESTING);
 
 
     cout << "Tamaño arreglo inicial: " << LARGO*sizeof(int)<<endl;
     cout << "Tamaño arreglo Gaps: " << aux*sizeof(ulong) <<" Tamaño arreglo Samples: " << (LARGO/sampling)*sizeof(int) <<endl;
-    cout << "Ratio de compresion: " << double(double(LARGO*sizeof(int))/double(aux*sizeof(ulong)+(LARGO/sampling)*sizeof(int)))<< endl;
-    cout << "Tiempo promedio de calculo: " << t << endl;
+    cout << "Ratio de compresion: " << double(double(aux*sizeof(ulong)+(LARGO/sampling)*sizeof(int))/double(LARGO*sizeof(int)))<< endl;
+    cout << "Tiempo promedio de consulta: " << Ttotal<<"ms" << endl;
 }

@@ -10,7 +10,7 @@ using namespace std;
 using namespace sdsl;
 using namespace cds;
 
-#define INC 32
+#define INC 16
 #define sampling 8192
 #define largoARR 65536
 #define TESTING 1000
@@ -119,7 +119,7 @@ void Storage(int Y[], ulong *Gaps, ulong *Excep, bit_vector Ex, int Bits, int Bi
         }
     }
     t = getTime_ms() - t;
-    cout << "Tiempo de compresion: " << t << endl;
+    cout << "Tiempo de compresion: " << t <<" ms" << endl;
 }
 
 /*========================================================================================================*/
@@ -204,7 +204,7 @@ int main(int argc, char **argv)
     cout << "Sampling mayor: " << (S[largoARR / sampling - 1]) << endl;
     cout << "Bits necesarios: " << BitSamplingMayor << endl;
     cout << "Calculo de distribuciones:" << endl;
-    cout << "Se necesitan " << (BitSamplingMayor * round(largoARR / sampling)) << " bits para almacenar el sampling" << endl;
+    cout << "Se necesitan " << (BitSamplingMayor * int(largoARR / sampling)) << " bits para almacenar el sampling" << endl;
     cout << "Bits arreglo original: " << largoARR*sizeof(int) << endl;
 
     cout << "sizeof Samples = " << aux * sizeof(ulong) << " bits" << endl;
@@ -223,6 +223,7 @@ int main(int argc, char **argv)
     cout << ", porcentaje fuera del intervalo: " << porcentajeO << endl;
     double T_ejec = 0.0;
     int rand_X = 0;
+    double sTotal = (aux * sizeof(ulong)+aux3 * sizeof(ulong)+aux2 * sizeof(ulong));
     for (int i = 0; i < TESTING; i++)
     {
         rand_X = rand() % largoARR;
@@ -230,6 +231,7 @@ int main(int argc, char **argv)
         //cout << " Numero pedido: " << X[rand_X] << " Valor de x: "<< rand_X << endl;
     }
     double T_Total = T_ejec / double(TESTING);
-    cout << "Tiempo de ejecucion: " << T_Total << endl;
+    cout << "Tiempo promedio de consulta: " << T_Total << "ms" << endl;
+    cout << "Ratio de compresion: " << double(sTotal/double(largoARR*sizeof(int))) << endl;
     exit;
 }
