@@ -11,8 +11,8 @@ using namespace sdsl;
 using namespace cds;
 
 #define INC 16
-#define sampling 8192
-#define largoARR 65536
+#define sampling 4096
+#define largoARR 32768
 #define TESTING 1000
 
 /*========================================================================================================*/
@@ -48,8 +48,6 @@ double leerElemento(int pos, bit_vector Ex, ulong *Samples, ulong *Gaps, ulong *
     double t = 0.0;
     rank_support_v<1> rankEx_1(&Ex);
     rank_support_v<0> rankEx_0(&Ex);
-    bit_vector::select_1_type Ex_Sel1(&Ex);
-    bit_vector::select_0_type Ex_Sel0(&Ex);
     t = getTime_ms();
     for (int i = Start; i < pos; i++)
     {

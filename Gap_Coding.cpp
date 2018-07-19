@@ -10,8 +10,8 @@ using namespace sdsl;
 using namespace cds;
 
 #define INC 16
-#define sampling 8192
-#define LARGO 65536
+#define sampling 4096
+#define LARGO 32768
 #define TESTING 1000
 
 void testing(ulong *Gaps, int Y[], int Z[],int Bits){ //X arreglo de gaps; Gaps sampling, Z arreglo original

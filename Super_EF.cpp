@@ -15,7 +15,7 @@ using namespace sdsl;
 using namespace cds;
 
 #define INCRE 16
-#define LARGO 65536
+#define LARGO 32768
 #define TESTING 1000
 
 /*=====================================================================================*/
@@ -75,7 +75,6 @@ int main(int argc, char **argv)
         x[i] = x[i - 1] + rand() % INCRE;
         //cout << " , " <<x[i];
     }
-    cout << endl;
 
     logN = (1 + int(log2(LARGO)));
     logM = (1 + int(log2(x[LARGO - 1])));
