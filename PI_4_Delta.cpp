@@ -12,9 +12,9 @@ using namespace std;
 using namespace sdsl;
 using namespace cds;
 
-#define INC 64
+#define INC 16
 #define sampling 8192
-#define largoARR 65536
+#define largoARR 131072
 #define TESTING 1000
 
 /*========================================================================================================*/
@@ -50,8 +50,6 @@ double leerElemento(int pos, bit_vector Ex, ulong *Samples, ulong *Gaps, ulong *
     double t = 0.0;
     rank_support_v<1> rankEx_1(&Ex);
     rank_support_v<0> rankEx_0(&Ex);
-    bit_vector::select_1_type Ex_Sel1(&Ex);
-    bit_vector::select_0_type Ex_Sel0(&Ex);
     t = getTime_ms();
     for (int i = Start; i < pos; i++)
     {
@@ -225,7 +223,7 @@ int main(int argc, char **argv)
     //cout << ", porcentaje fuera del intervalo: " << porcentajeO << endl;
     double T_ejec = 0.0;
     int rand_X = 0;
-    double sTotal = (aux * sizeof(ulong)+aux3 * sizeof(ulong)+aux2 * sizeof(ulong));
+    double sTotal = (aux * sizeof(ulong))+(aux3 * sizeof(ulong))+(aux2 * sizeof(ulong));
     double SArregloX = largoARR*sizeof(int);
     double SArregloG = aux3 * sizeof(ulong);
     double SArregloS = aux2 * sizeof(ulong);
@@ -241,7 +239,7 @@ int main(int argc, char **argv)
     cout << "Tiempo promedio de consulta: " << T_Total << "ms" << endl;
     cout << "Bits arreglo original: " << SArregloX << " Bits comprimidos: " << (SArregloG,SArregloS) << endl;
     cout << "Ratio de compresion: " << Ratio << endl;
-    cout << "Tiempo promedio de consulta: " << T_Total;
+    cout << "Tiempo promedio de consulta: " << T_Total << endl;
 
     ofstream Resultados;
     Resultados.open ("Resultados3.csv");

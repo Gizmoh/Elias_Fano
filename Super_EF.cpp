@@ -16,8 +16,9 @@ using namespace std;
 using namespace sdsl;
 using namespace cds;
 
-#define INCRE 64
-#define LARGO 65536
+#define INC 16
+#define sampling 8192
+#define largoARR 131072
 #define TESTING 1000
 
 /*=====================================================================================*/
@@ -65,39 +66,39 @@ int main(int argc, char **argv)
     int *xPrima;
     int *Gc;
     int diff = 0;
-    x = new int[LARGO];
-    xPrima = new int[LARGO];
-    Gc = new int[LARGO];
+    x = new int[largoARR];
+    xPrima = new int[largoARR];
+    Gc = new int[largoARR];
     int logN, logM, largoH, largoR = 0;
     int mayor = 0;
     string TlargoH, temp, tempA = "";
 
-    for (int i = 1; i < LARGO; i++)
+    for (int i = 1; i < largoARR; i++)
     {
-        x[i] = x[i - 1] + rand() % INCRE;
+        x[i] = x[i - 1] + rand() % INC;
         //cout << " , " <<x[i];
     }
-    cout << endl;
+    //cout << endl;
 
-    logN = (1 + int(log2(LARGO)));
-    logM = (1 + int(log2(x[LARGO - 1])));
-    /*largoH = logN*LARGO; No puede calcularse a priori */
-    largoR = (logM - logN) * LARGO;
+    logN = (1 + int(log2(largoARR)));
+    logM = (1 + int(log2(x[largoARR - 1])));
+    /*largoH = logN*largoARR; No puede calcularse a priori */
+    largoR = (logM - logN) * largoARR;
     diff = logM - logN;
 
     /*testing BUSCAR LA POSICÓN EN LA CUAL ESTA EL ELEMENTO 
-    int busqueda = x[rand()%LARGO];
+    int busqueda = x[rand()%largoARR];
     buscar(busqueda,Gc,S);*/
 
     /*=====================================================================================*/
     //Genero los 2 bit vectors.
-    string tempH[LARGO] = {""};
+    string tempH[largoARR] = {""};
     int counter = 0;
     int X = 0;
     int aux = 0;
     bit_vector R(largoR, 0);
 
-    for (int i = 0; i < LARGO; i++)
+    for (int i = 0; i < largoARR; i++)
     {
         temp = bitset<30>(x[i]).to_string();
         tempA = temp.substr(0, logN);
@@ -112,29 +113,29 @@ int main(int argc, char **argv)
         xPrima[i] = X;
     }
     Gc[0] = xPrima[0];
-    for (int i = 1; i < LARGO; i++)
+    for (int i = 1; i < largoARR; i++)
     {
         Gc[i] = (xPrima[i] - xPrima[i - 1]);
     }
 
-    for (int i = 0; i < LARGO; i++)
+    for (int i = 0; i < largoARR; i++)
     { //Calculo cuantos bits necesito para los unarios.
         counter += (Gc[i] + 1);
         //cout << tempH[i] << " " << X << " " << endl;
     }
 
     //cout << "Bits arreglos: " << counter << " " << largoR << endl;
-    //cout << "Bits vector original: " << sizeof(int) * LARGO;
+    //cout << "Bits vector original: " << sizeof(int) * largoARR;
     bit_vector H(counter, 0);
     counter = 0;
     H[0] = 1;
-    for (int i = 1; i < LARGO; i++)
+    for (int i = 1; i < largoARR; i++)
     {
         counter += (Gc[i] + 1);
         H[counter] = 1;
     }
 
-    cout << endl;
+    //cout << endl;
     uint auxi = 0;
     double t = 0.0;
     double tiempoTotal = 0.0;
@@ -143,13 +144,13 @@ int main(int argc, char **argv)
     for (int i = 0; i < TESTING; i++)
     {
         t = getTime_ms();
-        auxi = rand() % LARGO;
+        auxi = rand() % largoARR;
         //cout << auxi << endl;
         buscar(auxi, H, R);
         tiempoTotal += (getTime_ms()-t);
     }
-    double TTotal = sizeof(int) * LARGO;
-    double TComp = counter + largoR;
+    double TTotal = sizeof(int) * largoARR;
+    double TComp = (counter + largoR)/8;
     double Ratio = TComp / TTotal;
     tiempoTotal = (tiempoTotal/TESTING);
     cout << "Elias Fano" << endl;

@@ -11,16 +11,16 @@ using namespace std;
 using namespace sdsl;
 using namespace cds;
 
-#define INC 64
+#define INC 16
 #define sampling 8192
-#define LARGO 65536
+#define largoARR 131072
 #define TESTING 1000
 
 void testing(ulong *Gaps, int Y[], int Z[],int Bits){ //X arreglo de gaps; Gaps sampling, Z arreglo original
     int testing  = 0;
     int resultado = 0;
     int sampled = 0;
-    testing  = rand()%LARGO;
+    testing  = rand()%largoARR;
     sampled = trunc(testing/sampling);
     resultado = Y[sampled];
     //cout << Y[sampled] << " "<< testing << " " << sampled << " " << sampled*sampling << endl;
@@ -31,29 +31,29 @@ void testing(ulong *Gaps, int Y[], int Z[],int Bits){ //X arreglo de gaps; Gaps 
 }
 
 
-int main (int argc, char** argv){// Recibe como argumento el LARGO del arreglo
-    int X [LARGO]={};
-    int Y [LARGO] = {};
-    int S [LARGO/sampling] = {};
+int main (int argc, char** argv){// Recibe como argumento el largoARR del arreglo
+    int X [largoARR]={};
+    int Y [largoARR] = {};
+    int S [largoARR/sampling] = {};
     int max = 0;
     int r = 0;
     ulong *Gap;
-    int nCellsS = LARGO / sampling;
-    if (LARGO % sampling)
+    int nCellsS = largoARR / sampling;
+    if (largoARR % sampling)
         nCellsS++;
-    int nCellG = LARGO - nCellsS;
-    for(int i = 1; i< LARGO; i++){//Genero el arreglo no decreciente
+    int nCellG = largoARR - nCellsS;
+    for(int i = 1; i< largoARR; i++){//Genero el arreglo no decreciente
         r = rand()%INC;
         X[i]=X[i-1]+r;
     }
 
     Y[0] = X[0];
-    for(int i=1;i<LARGO;i++){//Calculo el Gap maximo.
+    for(int i=1;i<largoARR;i++){//Calculo el Gap maximo.
         Y[i]=X[i]-X[i-1];
         if(max < Y[i]) max = Y[i];
     }
     S[1]=Y[1];
-    for(int i = 1; i < int(LARGO/sampling);i++){//Genero el sampling
+    for(int i = 1; i < int(largoARR/sampling);i++){//Genero el sampling
         S[i] = X[i*sampling];
     }
     uint BitMayor = (1 + int(log2(max)));
@@ -74,13 +74,13 @@ int main (int argc, char** argv){// Recibe como argumento el LARGO del arreglo
         Ttotal += (getTime_ms()-t);
     }
     Ttotal = (Ttotal / TESTING);
-    double SArregloX = LARGO*sizeof(int);
+    double SArregloX = largoARR*sizeof(int);
     double SArregloG = aux*sizeof(ulong);
-    double SArregloS = (LARGO/sampling)*sizeof(int);
+    double SArregloS = (largoARR/sampling)*sizeof(int);
     double Ratio = (SArregloG+SArregloS)/SArregloX;
     cout << "Gap Coding" << endl;
     cout << "Parametros: " << endl;
-    cout << "Largo Arreglo: " << LARGO << " Incremento: " << INC << " Muestreo: " << sampling << endl;
+    cout << "Largo Arreglo: " << largoARR << " Incremento: " << INC << " Muestreo: " << sampling << endl;
     cout << "Tamaño arreglo original: " << SArregloX <<endl;
     cout << "Tamaño arreglo Gaps: " << SArregloG <<" Tamaño arreglo Samples: " << SArregloS <<endl;
     cout << "Ratio de compresion: " << Ratio << endl;
