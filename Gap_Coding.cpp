@@ -11,7 +11,7 @@ using namespace std;
 using namespace sdsl;
 using namespace cds;
 
-#define INC 16
+#define INC 64
 #define sampling 8192
 #define LARGO 65536
 #define TESTING 1000
@@ -78,9 +78,10 @@ int main (int argc, char** argv){// Recibe como argumento el LARGO del arreglo
     double SArregloG = aux*sizeof(ulong);
     double SArregloS = (LARGO/sampling)*sizeof(int);
     double Ratio = (SArregloG+SArregloS)/SArregloX;
-
-
-    cout << "Tamaño arreglo inicial: " << SArregloX <<endl;
+    cout << "Gap Coding" << endl;
+    cout << "Parametros: " << endl;
+    cout << "Largo Arreglo: " << LARGO << " Incremento: " << INC << " Muestreo: " << sampling << endl;
+    cout << "Tamaño arreglo original: " << SArregloX <<endl;
     cout << "Tamaño arreglo Gaps: " << SArregloG <<" Tamaño arreglo Samples: " << SArregloS <<endl;
     cout << "Ratio de compresion: " << Ratio << endl;
     cout << "Tiempo promedio de consulta: " << Ttotal<<"ms" << endl;

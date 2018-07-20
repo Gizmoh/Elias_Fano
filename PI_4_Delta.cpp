@@ -12,7 +12,7 @@ using namespace std;
 using namespace sdsl;
 using namespace cds;
 
-#define INC 16
+#define INC 64
 #define sampling 8192
 #define largoARR 65536
 #define TESTING 1000
@@ -221,8 +221,8 @@ int main(int argc, char **argv)
 
     porcentajeI = double(contadorI) / double(largoARR);
     porcentajeO = double(contadorO) / double(largoARR);
-    cout << " Porcentaje en el intervalo: " << porcentajeI;
-    cout << ", porcentaje fuera del intervalo: " << porcentajeO << endl;
+    //cout << " Porcentaje en el intervalo: " << porcentajeI;
+    //cout << ", porcentaje fuera del intervalo: " << porcentajeO << endl;
     double T_ejec = 0.0;
     int rand_X = 0;
     double sTotal = (aux * sizeof(ulong)+aux3 * sizeof(ulong)+aux2 * sizeof(ulong));
@@ -237,8 +237,11 @@ int main(int argc, char **argv)
         //cout << " Numero pedido: " << X[rand_X] << " Valor de x: "<< rand_X << endl;
     }
     double T_Total = T_ejec / double(TESTING);
+    cout << "PforDelta" << endl;
     cout << "Tiempo promedio de consulta: " << T_Total << "ms" << endl;
+    cout << "Bits arreglo original: " << SArregloX << " Bits comprimidos: " << (SArregloG,SArregloS) << endl;
     cout << "Ratio de compresion: " << Ratio << endl;
+    cout << "Tiempo promedio de consulta: " << T_Total;
 
     ofstream Resultados;
     Resultados.open ("Resultados3.csv");

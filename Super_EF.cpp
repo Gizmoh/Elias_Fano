@@ -16,7 +16,7 @@ using namespace std;
 using namespace sdsl;
 using namespace cds;
 
-#define INCRE 16
+#define INCRE 64
 #define LARGO 65536
 #define TESTING 1000
 
@@ -152,6 +152,9 @@ int main(int argc, char **argv)
     double TComp = counter + largoR;
     double Ratio = TComp / TTotal;
     tiempoTotal = (tiempoTotal/TESTING);
+    cout << "Elias Fano" << endl;
+    cout << "Tamaño arreglo original: " << TTotal;
+    cout << "Tamaño arreglos comprimidos: " << TComp;
     cout << "Ratio de compresion: " << TComp / TTotal << endl;
     cout << "Tiempo promedio de consulta: " << tiempoTotal <<"ms" << endl;
 
