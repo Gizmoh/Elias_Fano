@@ -7,6 +7,8 @@
 #include <ctime>
 #include <math.h>
 #include <iostream>
+#include <fstream>
+#include <iostream>
 #include <bitset>
 #include "include/BasicCDS.h"
 
@@ -148,9 +150,15 @@ int main(int argc, char **argv)
     }
     double TTotal = sizeof(int) * LARGO;
     double TComp = counter + largoR;
+    double Ratio = TComp / TTotal;
     tiempoTotal = (tiempoTotal/TESTING);
     cout << "Ratio de compresion: " << TComp / TTotal << endl;
     cout << "Tiempo promedio de consulta: " << tiempoTotal <<"ms" << endl;
+
+    ofstream Resultados;
+    Resultados.open ("Resultados2.csv");
+    Resultados << "Esquema,Tiempo promedio (ms),Ratio de compresion, Bits arreglo original, Bits comprimido,/n";
+    Resultados <<"Elias Fano,"<< tiempoTotal<<","<<Ratio<<","<<TTotal<<","<<TComp<<"\n";
 
     if (Gc)
         delete[] Gc;

@@ -3,6 +3,8 @@
 #include <sdsl/int_vector.hpp>
 #include <sdsl/util.hpp>
 #include <math.h>
+#include <iostream>
+#include <fstream>
 #include "include/BasicCDS.h"
 
 using namespace std;
@@ -72,10 +74,19 @@ int main (int argc, char** argv){// Recibe como argumento el LARGO del arreglo
         Ttotal += (getTime_ms()-t);
     }
     Ttotal = (Ttotal / TESTING);
+    double SArregloX = LARGO*sizeof(int);
+    double SArregloG = aux*sizeof(ulong);
+    double SArregloS = (LARGO/sampling)*sizeof(int);
+    double Ratio = (SArregloG+SArregloS)/SArregloX;
 
 
-    cout << "Tamaño arreglo inicial: " << LARGO*sizeof(int)<<endl;
-    cout << "Tamaño arreglo Gaps: " << aux*sizeof(ulong) <<" Tamaño arreglo Samples: " << (LARGO/sampling)*sizeof(int) <<endl;
-    cout << "Ratio de compresion: " << double(double(aux*sizeof(ulong)+(LARGO/sampling)*sizeof(int))/double(LARGO*sizeof(int)))<< endl;
+    cout << "Tamaño arreglo inicial: " << SArregloX <<endl;
+    cout << "Tamaño arreglo Gaps: " << SArregloG <<" Tamaño arreglo Samples: " << SArregloS <<endl;
+    cout << "Ratio de compresion: " << Ratio << endl;
     cout << "Tiempo promedio de consulta: " << Ttotal<<"ms" << endl;
+    ofstream Resultados;
+    Resultados.open ("Resultados.csv");
+    Resultados << "Esquema,Tiempo promedio (ms),Ratio de compresion, Bits arreglo original, Bits comprimido\n";
+    Resultados <<"Gap Coding,"<< Ttotal<<","<<Ratio<<","<<SArregloX<<","<<(SArregloG+SArregloS)<<"\n";
+
 }

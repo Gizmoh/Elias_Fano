@@ -4,6 +4,8 @@
 #include <stdlib.h>
 #include <math.h>
 #include <time.h>
+#include <iostream>
+#include <fstream>
 #include "include/BasicCDS.h"
 
 using namespace std;
@@ -198,7 +200,7 @@ int main(int argc, char **argv)
     {
         aux3++;
     }
-
+    /*
     cout << "Excepcion mayor: " << mayor << endl;
     cout << "Bits necesarios: " << BitMayor << endl;
     cout << "Sampling mayor: " << (S[largoARR / sampling - 1]) << endl;
@@ -209,7 +211,7 @@ int main(int argc, char **argv)
 
     cout << "sizeof Samples = " << aux * sizeof(ulong) << " bits" << endl;
     cout << "sizeof Gaps = " << aux3 * sizeof(ulong) << " bits" << endl;
-    cout << "sizeof Exceptions = " << aux2 * sizeof(ulong) << " bits" << endl;
+    cout << "sizeof Exceptions = " << aux2 * sizeof(ulong) << " bits" << endl;*/
     Samples = new ulong[aux];
     Gaps = new ulong[aux2];
     Excep = new ulong[aux3];
@@ -224,6 +226,10 @@ int main(int argc, char **argv)
     double T_ejec = 0.0;
     int rand_X = 0;
     double sTotal = (aux * sizeof(ulong)+aux3 * sizeof(ulong)+aux2 * sizeof(ulong));
+    double SArregloX = largoARR*sizeof(int);
+    double SArregloG = aux3 * sizeof(ulong);
+    double SArregloS = aux2 * sizeof(ulong);
+    double Ratio = sTotal/double(largoARR*sizeof(int));
     for (int i = 0; i < TESTING; i++)
     {
         rand_X = rand() % largoARR;
@@ -232,6 +238,12 @@ int main(int argc, char **argv)
     }
     double T_Total = T_ejec / double(TESTING);
     cout << "Tiempo promedio de consulta: " << T_Total << "ms" << endl;
-    cout << "Ratio de compresion: " << double(sTotal/double(largoARR*sizeof(int))) << endl;
+    cout << "Ratio de compresion: " << Ratio << endl;
+
+    ofstream Resultados;
+    Resultados.open ("Resultados3.csv");
+    Resultados << "Esquema,Tiempo promedio (ms),Ratio de compresion, Bits arreglo original, Bits comprimido,/n";
+    Resultados <<"P4Delta,"<< T_Total<<","<<Ratio<<","<<SArregloX<<","<<(SArregloG+SArregloS)<<"\n";
+    Resultados.close();
     exit;
 }
